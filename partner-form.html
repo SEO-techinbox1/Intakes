@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partnership Application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0B0D;--bg2:#141416;--bg3:#1a1a1d;
+  --border:rgba(255,255,255,.07);--text:#fff;
+  --muted:rgba(255,255,255,.42);--accent:#3B82F6;
+  --accent-dim:rgba(59,130,246,.11);--gray:#52525B;
+  --error:#EF4444;--radius:12px;--radius-sm:8px;--step-max:740px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");background-size:200px;pointer-events:none;z-index:0}
+
+/* topbar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:15px 28px;background:rgba(11,11,13,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.wordmark{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.lang-switcher{display:flex;gap:3px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:3px}
+.lang-btn{background:none;border:none;color:var(--muted);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;padding:4px 11px;border-radius:5px;transition:all .2s}
+.lang-btn:hover{color:#fff}
+.lang-btn.active{background:var(--accent);color:#fff;font-weight:600}
+
+/* progress */
+.progress-wrap{position:fixed;top:53px;left:0;right:0;z-index:99;height:2px;background:rgba(255,255,255,.05)}
+.progress-bar{height:100%;background:var(--accent);transition:width .4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(59,130,246,.4)}
+
+/* shell */
+.shell{position:relative;z-index:1;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:108px 20px 80px}
+.form-wrap{width:100%;max-width:var(--step-max)}
+
+/* steps */
+.step{display:none;animation:fadeUp .3s ease forwards}
+.step.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* intro */
+.intro-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:44px;margin-bottom:28px;position:relative;overflow:hidden}
+.intro-card::after{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(59,130,246,.08),transparent 65%);border-radius:50%;pointer-events:none}
+.intro-tag{display:inline-flex;align-items:center;gap:7px;background:var(--accent-dim);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:5px 13px;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:22px;letter-spacing:.01em}
+.intro-tag svg{width:13px;height:13px;flex-shrink:0}
+.intro-card h1{font-size:clamp(26px,4vw,38px);font-weight:800;line-height:1.12;letter-spacing:-.025em;margin-bottom:14px}
+.intro-card p{color:rgba(255,255,255,.6);font-size:14px;line-height:1.72;max-width:480px}
+.intro-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}
+.meta-box{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center}
+.meta-box .val{font-size:20px;font-weight:700;color:var(--accent)}
+.meta-box .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+.meta-box .sub{font-size:10px;color:rgba(255,255,255,.2);margin-top:3px;letter-spacing:.03em}
+
+/* block header */
+.block-tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.block-title{font-size:clamp(22px,4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:10px}
+.block-sub{color:var(--muted);font-size:14px;margin-bottom:36px;line-height:1.65}
+
+/* fields */
+.field-group{display:grid;gap:18px;margin-bottom:6px}
+.field-group.two-col{grid-template-columns:1fr 1fr}
+@media(max-width:560px){.field-group.two-col{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:12px;font-weight:500;color:rgba(255,255,255,.65);letter-spacing:.015em}
+.field label .req{color:var(--accent);margin-left:2px}
+.field .hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:-2px}
+
+input[type=text],input[type=email],input[type=url],input[type=number],textarea,select{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:12px 15px;width:100%;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+textarea{resize:vertical;min-height:96px}
+
+/* choices */
+.choice-group{display:flex;flex-direction:column;gap:8px}
+.choice-item{display:flex;align-items:flex-start;gap:11px;cursor:pointer;padding:13px 15px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);transition:border-color .18s,background .18s;user-select:none}
+.choice-item:hover{border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.03)}
+.choice-item input[type=radio],.choice-item input[type=checkbox]{width:17px;height:17px;min-width:17px;accent-color:var(--accent);margin-top:1px;cursor:pointer;padding:0;background:none;border:none;flex-shrink:0}
+.choice-item.selected{border-color:var(--accent);background:var(--accent-dim)}
+.choice-label{font-size:13px;line-height:1.5}
+.choice-label small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px}
+.check-item{display:flex;align-items:center;gap:9px;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .18s,background .18s;user-select:none;font-size:12px}
+.check-item:hover{border-color:rgba(59,130,246,.3)}
+.check-item.selected{border-color:var(--accent);background:var(--accent-dim)}
+.check-item input{width:14px;height:14px;accent-color:var(--accent);padding:0;background:none;border:none;flex-shrink:0}
+
+/* tiers */
+.tier-group{display:flex;gap:7px;flex-wrap:wrap}
+.tier-pill{padding:7px 17px;border-radius:100px;border:1px solid var(--border);background:var(--bg2);color:rgba(255,255,255,.65);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;user-select:none}
+.tier-pill:hover{border-color:rgba(59,130,246,.4)}
+.tier-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+/* conditional */
+.conditional-field{display:none;margin-top:10px}
+.conditional-field.visible{display:block}
+
+/* divider */
+.divider{height:1px;background:var(--border);margin:28px 0}
+
+/* nav */
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:36px;gap:10px}
+.nav-row.intro-nav{justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:13px 26px;border-radius:var(--radius-sm);border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.01em}
+.btn-primary{background:var(--accent);color:#fff;font-weight:600}
+.btn-primary:hover{background:#2563EB;transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+.btn-lg{padding:15px 34px;font-size:15px;border-radius:var(--radius)}
+.btn svg{width:16px;height:16px;flex-shrink:0}
+.step-counter{font-size:12px;color:var(--muted)}
+
+/* errors */
+.field-error{font-size:11px;color:var(--error);margin-top:3px;display:none}
+.field.has-error input,.field.has-error textarea,.field.has-error select{border-color:var(--error)}
+.field.has-error .field-error{display:block}
+.group-error{outline:1px solid var(--error);border-radius:var(--radius-sm)}
+.tier-error{font-size:11px;color:var(--error);margin-top:6px;display:none}
+
+/* dots */
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:36px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gray);transition:all .28s}
+.dot.done{background:rgba(59,130,246,.4)}
+.dot.active{background:var(--accent);width:18px;border-radius:3px}
+
+/* spinner */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn.loading .spinner{display:block}
+.btn.loading .btn-text{display:none}
+
+/* success */
+.success-wrap{text-align:center;padding:56px 28px}
+.success-icon{width:64px;height:64px;background:var(--accent-dim);border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 28px}
+.success-icon svg{width:28px;height:28px;color:var(--accent)}
+.success-wrap h2{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.success-wrap p{color:var(--muted);font-size:14px;max-width:360px;margin:0 auto}
+
+/* notif */
+.notif{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;z-index:999;transform:translateY(140%);transition:transform .28s;max-width:300px;opacity:0}
+.notif.show{transform:translateY(0);opacity:1}
+.notif .ndot{width:7px;height:7px;min-width:7px;border-radius:50%;background:var(--accent)}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="wordmark" data-k="wordmark">Affiliate Application</span>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="ru">RU</button>
+    <button class="lang-btn" data-lang="ua">UA</button>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+
+<div class="shell">
+<div class="form-wrap">
+  <div class="dots" id="dots"></div>
+
+  <!-- STEP 0 — INTRO -->
+  <div class="step active" id="step-0">
+    <div class="intro-card">
+      <div class="intro-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span data-k="badge">Affiliate Partnership Application</span>
+      </div>
+      <h1 data-k="intro_title">Tell us about your product — we'll find the right fit.</h1>
+      <p data-k="intro_sub">A structured intake form for brands looking to be listed on our SEO review sites. We use your answers to evaluate placement potential, deal structure, and GEO fit. Takes 5–7 minutes.</p>
+      <div class="intro-meta">
+        <div class="meta-box"><div class="val">5–7</div><div class="lbl" data-k="stat1">minutes</div></div>
+        <div class="meta-box"><div class="val">3</div><div class="lbl" data-k="stat2">blocks</div></div>
+        <div class="meta-box"><div class="val">100%</div><div class="lbl" data-k="stat3">private</div><div class="sub" data-k="stat3_sub">not shared publicly</div></div>
+      </div>
+    </div>
+    <div class="nav-row intro-nav">
+      <button class="btn btn-primary btn-lg" id="btn-start">
+        <span class="btn-text" data-k="start">Start</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- BLOCK 1 — CONTACT & BRAND -->
+  <div class="step" id="step-1">
+    <div class="block-tag" data-k="b1_tag">Block 1 of 3</div>
+    <h2 class="block-title" data-k="b1_title">Contact &amp; Brand</h2>
+    <p class="block-sub" data-k="b1_sub">Your contact details and core brand information.</p>
+
+    <!-- Q1: Manager name + contact -->
+    <div class="field-group">
+      <div class="field" id="f-mgr-name">
+        <label><span data-k="mgr_name">Manager full name</span><span class="req">*</span></label>
+        <input type="text" id="mgr_name" placeholder="e.g. Ivan Petrov">
+        <span class="field-error" data-k="err_required">Required</span>
+      </div>
+      <div class="field" id="f-mgr-email">
+        <label><span data-k="mgr_email">Email address</span><span class="req">*</span></label>
+        <input type="email" id="mgr_email" placeholder="name@yourbrand.com">
+        <span class="field-error" data-k="err_email">Enter a valid email</span>
+      </div>
+      <div class="field" id="f-mgr-tg">
+        <label><span data-k="mgr_tg">Telegram username</span><span class="req">*</span></label>
+        <input type="text" id="mgr_tg" placeholder="@username">
+        <span class="field-error" data-k="err_required">Required</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q2: Affiliate program URL -->
+    <div class="field-group">
+      <div class="field" id="f-aff-url">
+        <label><span data-k="aff_url">Affiliate program URL</span><span class="req">*</span></label>
+        <input type="url" id="aff_url" placeholder="https://affiliates.yourbrand.com">
+        <span class="field-error" data-k="err_url">Enter a valid URL (include https://)</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q3 + Q4: Brand name, year, URL -->
+    <div class="field-group two-col">
+      <div class="field" id="f-brand-name">
+        <label><span data-k="brand_name">Brand name</span><span class="req">*</span></label>
+        <input type="text" id="brand_name" placeholder="e.g. SuperCasino">
+        <span class="field-error" data-k="err_required">Required</span>
+      </div>
+      <div class="field" id="f-brand-year">
+        <label><span data-k="brand_year">Year of launch</span><span class="req">*</span></label>
+        <input type="number" id="brand_year" placeholder="e.g. 2021" min="2000" max="2030">
+        <span class="field-error" data-k="err_required">Required</span>
+      </div>
+    </div>
+    <div class="field-group" style="margin-top:18px">
+      <div class="field" id="f-brand-url">
+        <label><span data-k="brand_url">Brand URL</span><span class="req">*</span></label>
+        <input type="url" id="brand_url" placeholder="https://yourbrand.com">
+        <span class="field-error" data-k="err_url">Enter a valid URL (include https://)</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q5: License -->
+    <div class="field">
+      <label><span data-k="license_label">Active operating license</span><span class="req">*</span></label>
+      <div class="choice-group" id="license-group" style="margin-top:4px">
+        <label class="choice-item" data-radio="license" data-val="Anjouan"><input type="radio" name="license" value="Anjouan"><span class="choice-label">Anjouan</span></label>
+        <label class="choice-item" data-radio="license" data-val="Curacao"><input type="radio" name="license" value="Curacao"><span class="choice-label">Curaçao eGaming</span></label>
+        <label class="choice-item" data-radio="license" data-val="Costa Rica"><input type="radio" name="license" value="Costa Rica"><span class="choice-label">Costa Rica</span></label>
+        <label class="choice-item" data-radio="license" data-val="Other"><input type="radio" name="license" value="Other"><span class="choice-label">Other</span></label>
+        <label class="choice-item" data-radio="license" data-val="N/A"><input type="radio" name="license" value="N/A"><span class="choice-label">N/A <small data-k="license_na_hint">No license — please explain below</small></span></label>
+      </div>
+      <div class="conditional-field" id="license-explain">
+        <input type="text" id="license_note" placeholder="Explain licensing situation…" data-ph="license_note_ph">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q6: Whitelabel software -->
+    <div class="field">
+      <label><span data-k="software_label">Whitelabel software</span><span class="req">*</span></label>
+      <div class="choice-group" id="software-group" style="margin-top:4px">
+        <label class="choice-item" data-radio="software" data-val="Soft2bet"><input type="radio" name="software" value="Soft2bet"><span class="choice-label">Soft2bet</span></label>
+        <label class="choice-item" data-radio="software" data-val="iGate"><input type="radio" name="software" value="iGate"><span class="choice-label">iGate</span></label>
+        <label class="choice-item" data-radio="software" data-val="Trulabel"><input type="radio" name="software" value="Trulabel"><span class="choice-label">Trulabel</span></label>
+        <label class="choice-item" data-radio="software" data-val="GBL"><input type="radio" name="software" value="GBL"><span class="choice-label">GBL</span></label>
+        <label class="choice-item" data-radio="software" data-val="Extendy"><input type="radio" name="software" value="Extendy"><span class="choice-label">Extendy</span></label>
+        <label class="choice-item" data-radio="software" data-val="SoftSwiss"><input type="radio" name="software" value="SoftSwiss"><span class="choice-label">SoftSwiss</span></label>
+        <label class="choice-item" data-radio="software" data-val="Upgaming"><input type="radio" name="software" value="Upgaming"><span class="choice-label">Upgaming</span></label>
+        <label class="choice-item" data-radio="software" data-val="BetConstruct"><input type="radio" name="software" value="BetConstruct"><span class="choice-label">BetConstruct</span></label>
+        <label class="choice-item" data-radio="software" data-val="Self-proprietary"><input type="radio" name="software" value="Self-proprietary"><span class="choice-label">Self-proprietary / self-written</span></label>
+        <label class="choice-item" data-radio="software" data-val="Other"><input type="radio" name="software" value="Other"><span class="choice-label">Other</span></label>
+      </div>
+      <div class="conditional-field" id="software-explain">
+        <input type="text" id="software_note" placeholder="Specify platform…" data-ph="software_note_ph">
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" data-goto="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span data-k="back">Back</span></button>
+      <span class="step-counter">1 / 3</span>
+      <button class="btn btn-primary" data-next="1"><span class="btn-text" data-k="next">Continue</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+
+  <!-- BLOCK 2 — TRAFFIC & DEAL -->
+  <div class="step" id="step-2">
+    <div class="block-tag" data-k="b2_tag">Block 2 of 3</div>
+    <h2 class="block-title" data-k="b2_title">Traffic &amp; Deal Structure</h2>
+    <p class="block-sub" data-k="b2_sub">GEO focus, deal terms, SEO performance, and the approaches you accept from partners.</p>
+
+    <!-- Q7: Fixed fees -->
+    <div class="field">
+      <label><span data-k="ff_label">Do you work with fixed fees for listing on specific site blocks and/or top positions?</span><span class="req">*</span></label>
+      <p class="hint" data-k="ff_hint">e.g. featured placement, top-3 position on a review page for a calendar month</p>
+      <div class="choice-group" id="ff-group" style="margin-top:8px">
+        <label class="choice-item" data-radio="fixed_fees" data-val="Yes"><input type="radio" name="fixed_fees" value="Yes"><span class="choice-label" data-k="ff_yes">Yes — we already work with fixed fees</span></label>
+        <label class="choice-item" data-radio="fixed_fees" data-val="Open to discuss"><input type="radio" name="fixed_fees" value="Open to discuss"><span class="choice-label" data-k="ff_open">Open to discuss</span></label>
+        <label class="choice-item" data-radio="fixed_fees" data-val="No"><input type="radio" name="fixed_fees" value="No"><span class="choice-label" data-k="ff_no">No, not at this stage</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q8: Focus GEOs -->
+    <div class="field">
+      <label><span data-k="tier_label">Best converting / focus Tier</span><span class="req">*</span></label>
+      <div class="tier-group" id="tier-group" style="margin-top:6px">
+        <span class="tier-pill" data-tier="Tier-1">Tier-1</span>
+        <span class="tier-pill" data-tier="Tier-2">Tier-2</span>
+        <span class="tier-pill" data-tier="Tier-3">Tier-3</span>
+      </div>
+      <span class="tier-error" id="tier-error" data-k="err_tier">Select at least one tier</span>
+    </div>
+    <div class="field" id="f-geo-list" style="margin-top:16px">
+      <label><span data-k="geo_label">Specify target GEOs</span><span class="req">*</span></label>
+      <input type="text" id="geo_list" placeholder="e.g. DE, PL, CZ, AT…">
+      <span class="field-error" data-k="err_required">Required</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q9: Avg CR SEO -->
+    <div class="field">
+      <label><span data-k="cr_label">Avg. conversion rate (reg → deposit) — SEO traffic</span><span class="req">*</span></label>
+      <div class="choice-group" id="cr-group" style="margin-top:6px">
+        <label class="choice-item" data-radio="cr_seo" data-val="&lt;5%"><input type="radio" name="cr_seo" value="<5%"><span class="choice-label">&lt;5%</span></label>
+        <label class="choice-item" data-radio="cr_seo" data-val="5–10%"><input type="radio" name="cr_seo" value="5–10%"><span class="choice-label">5–10%</span></label>
+        <label class="choice-item" data-radio="cr_seo" data-val="10–20%"><input type="radio" name="cr_seo" value="10–20%"><span class="choice-label">10–20%</span></label>
+        <label class="choice-item" data-radio="cr_seo" data-val="20–30%"><input type="radio" name="cr_seo" value="20–30%"><span class="choice-label">20–30%</span></label>
+        <label class="choice-item" data-radio="cr_seo" data-val="30%+"><input type="radio" name="cr_seo" value="30%+"><span class="choice-label">30%+</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q10: SEO approaches -->
+    <div class="field">
+      <label><span data-k="seo_label">SEO approaches you accept</span><span class="req">*</span></label>
+      <p class="hint" data-k="seo_hint">Select all that apply.</p>
+      <div class="choice-group" id="seo-group" style="margin-top:8px">
+        <label class="choice-item" data-checkbox><input type="checkbox" value="Parasite SEO"><span class="choice-label" data-k="seo_a1">Parasite SEO (Reddit, TrustPilot, etc.)</span></label>
+        <label class="choice-item" data-checkbox><input type="checkbox" value="Classic / drop-domain / EMD / slot review sites"><span class="choice-label" data-k="seo_a2">Classic review / drop-domain / EMD / slot review sites</span></label>
+        <label class="choice-item" data-checkbox><input type="checkbox" value="Cross-brand"><span class="choice-label" data-k="seo_a3">Cross-brand — redirecting users between products</span></label>
+        <label class="choice-item" data-checkbox><input type="checkbox" value="Mono-brand"><span class="choice-label" data-k="seo_a4">Mono-brand — site dedicated entirely to your casino <small data-k="seo_a4_hint">Brand keywords may be used</small></span></label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" data-goto="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span data-k="back">Back</span></button>
+      <span class="step-counter">2 / 3</span>
+      <button class="btn btn-primary" data-next="2"><span class="btn-text" data-k="next">Continue</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+
+  <!-- BLOCK 3 — OPERATIONS & PAYMENTS -->
+  <div class="step" id="step-3">
+    <div class="block-tag" data-k="b3_tag">Block 3 of 3</div>
+    <h2 class="block-title" data-k="b3_title">Operations &amp; Payments</h2>
+    <p class="block-sub" data-k="b3_sub">Product maturity, CRM setup, and payment terms.</p>
+
+    <!-- Q11: Retention strategies -->
+    <div class="field">
+      <label><span data-k="ret_label">Retention strategies implemented</span><span class="req">*</span></label>
+      <p class="hint" data-k="ret_hint">Select all that apply.</p>
+      <div class="check-grid" id="retention-group" style="margin-top:10px">
+        <label class="check-item" data-checkbox><input type="checkbox" value="Behavioural CRM tracking"><span data-k="ret1">Behavioural CRM tracking</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Email retention campaigns"><span data-k="ret2">Email retention campaigns</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Live chat support"><span data-k="ret3">Live chat support</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Local-language phone support (VIP)"><span data-k="ret4">Phone support (VIP, local language)</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="SMS / push notifications"><span data-k="ret5">SMS / Push notifications</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Loyalty / VIP programme"><span data-k="ret6">Loyalty / VIP programme</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Reactivation bonuses"><span data-k="ret7">Reactivation bonuses</span></label>
+        <label class="check-item" data-checkbox><input type="checkbox" value="Personalised bonus offers"><span data-k="ret8">Personalised bonus offers</span></label>
+      </div>
+      <input type="text" id="retention_other" placeholder="Other retention methods…" data-ph="ret_other_ph" style="margin-top:10px">
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q12: Target payback period -->
+    <div class="field">
+      <label><span data-k="pp_label">Target payback period on product</span><span class="req">*</span></label>
+      <div class="choice-group" id="pp-group" style="flex-direction:row;flex-wrap:wrap;gap:7px;margin-top:6px">
+        <label class="choice-item" data-radio="payback" data-val="3 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="3 months"><span class="choice-label" data-k="pp1">3 months</span></label>
+        <label class="choice-item" data-radio="payback" data-val="6 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="6 months"><span class="choice-label" data-k="pp2">6 months</span></label>
+        <label class="choice-item" data-radio="payback" data-val="9 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="9 months"><span class="choice-label" data-k="pp3">9 months</span></label>
+        <label class="choice-item" data-radio="payback" data-val="1 year+" style="flex:1;min-width:110px"><input type="radio" name="payback" value="1 year+"><span class="choice-label" data-k="pp4">1 year+</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q13: Payment terms -->
+    <div class="field">
+      <label><span data-k="pt_label">Affiliate program payment terms</span><span class="req">*</span></label>
+      <div class="choice-group" id="pt-group" style="flex-direction:row;flex-wrap:wrap;gap:7px;margin-top:6px">
+        <label class="choice-item" data-radio="payment_terms" data-val="Net7" style="flex:1;min-width:90px"><input type="radio" name="payment_terms" value="Net7"><span class="choice-label">Net7</span></label>
+        <label class="choice-item" data-radio="payment_terms" data-val="Net14" style="flex:1;min-width:90px"><input type="radio" name="payment_terms" value="Net14"><span class="choice-label">Net14</span></label>
+        <label class="choice-item" data-radio="payment_terms" data-val="Net30" style="flex:1;min-width:90px"><input type="radio" name="payment_terms" value="Net30"><span class="choice-label">Net30</span></label>
+        <label class="choice-item" data-radio="payment_terms" data-val="Net45+" style="flex:1;min-width:90px"><input type="radio" name="payment_terms" value="Net45+"><span class="choice-label">Net45+</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Q14: Comment (optional) -->
+    <div class="field">
+      <label data-k="comment_label">Anything else?</label>
+      <textarea id="comment" rows="4" placeholder="Preferred deal structure, target GEOs, expected FTD volumes, questions…" data-ph="comment_ph"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" data-goto="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span data-k="back">Back</span></button>
+      <span class="step-counter">3 / 3</span>
+      <button class="btn btn-primary btn-lg" id="submit-btn">
+        <span class="btn-text" data-k="submit">Submit</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="success-wrap">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h2 data-k="success_title">Application received</h2>
+      <p data-k="success_sub">We'll review your details and follow up within 1–2 business days.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="notif" id="notif"><div class="ndot"></div><span id="notif-text"></span></div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwQf3JmwR8iE71V4q7m_vjW72XXgj4QoFiqcf-JCjaivw4z1XKTSFh_Kor1HsDWqYciBw/exec';
+
+const T = {
+  en:{
+    wordmark:'Affiliate Application',
+    badge:'Affiliate Partnership Application',
+    intro_title:'Tell us about your product — we\'ll find the right fit.',
+    intro_sub:'A structured intake form for brands looking to be listed on our SEO review sites. We use your answers to evaluate placement potential, deal structure, and GEO fit. Takes 5–7 minutes.',
+    stat1:'minutes', stat2:'blocks', stat3:'private', stat3_sub:'not shared publicly',
+    start:'Start',
+    b1_tag:'Block 1 of 3', b1_title:'Contact &amp; Brand', b1_sub:'Your contact details and core brand information.',
+    mgr_name:'Manager full name', mgr_email:'Email address', mgr_tg:'Telegram username',
+    aff_url:'Affiliate program URL',
+    brand_name:'Brand name', brand_year:'Year of launch', brand_url:'Brand URL',
+    license_label:'Active operating license', license_na_hint:'No license — please explain below',
+    license_note_ph:'Explain licensing situation…',
+    software_label:'Whitelabel software', software_note_ph:'Specify platform…',
+    b2_tag:'Block 2 of 3', b2_title:'Traffic &amp; Deal Structure',
+    b2_sub:'GEO focus, deal terms, SEO performance, and the approaches you accept from partners.',
+    ff_label:'Do you work with fixed fees for listing on specific site blocks and/or top positions?',
+    ff_hint:'e.g. featured placement, top-3 position on a review page for a calendar month',
+    ff_yes:'Yes — we already work with fixed fees', ff_open:'Open to discuss', ff_no:'No, not at this stage',
+    tier_label:'Best converting / focus Tier', geo_label:'Specify target GEOs',
+    cr_label:'Avg. conversion rate (reg → deposit) — SEO traffic',
+    seo_label:'SEO approaches you accept', seo_hint:'Select all that apply.',
+    seo_a1:'Parasite SEO (Reddit, TrustPilot, etc.)',
+    seo_a2:'Classic review / drop-domain / EMD / slot review sites',
+    seo_a3:'Cross-brand — redirecting users between products',
+    seo_a4:'Mono-brand — site dedicated entirely to your casino',
+    seo_a4_hint:'Brand keywords may be used',
+    b3_tag:'Block 3 of 3', b3_title:'Operations &amp; Payments', b3_sub:'Product maturity, CRM setup, and payment terms.',
+    ret_label:'Retention strategies implemented', ret_hint:'Select all that apply.',
+    ret1:'Behavioural CRM tracking', ret2:'Email retention campaigns', ret3:'Live chat support',
+    ret4:'Phone support (VIP, local language)', ret5:'SMS / Push notifications',
+    ret6:'Loyalty / VIP programme', ret7:'Reactivation bonuses', ret8:'Personalised bonus offers',
+    ret_other_ph:'Other retention methods…',
+    pp_label:'Target payback period on product',
+    pp1:'3 months', pp2:'6 months', pp3:'9 months', pp4:'1 year+',
+    pt_label:'Affiliate program payment terms',
+    comment_label:'Anything else?',
+    comment_ph:'Preferred deal structure, target GEOs, expected FTD volumes, questions…',
+    submit:'Submit', back:'Back', next:'Continue',
+    success_title:'Application received',
+    success_sub:'We\'ll review your details and follow up within 1–2 business days.',
+    err_required:'Required', err_email:'Enter a valid email',
+    err_url:'Enter a valid URL (include https://)', err_tier:'Select at least one tier'
+  },
+  ru:{
+    wordmark:'Партнёрская заявка',
+    badge:'Заявка на аффилиатное партнёрство',
+    intro_title:'Расскажите о своём продукте — найдём подходящий формат.',
+    intro_sub:'Структурированная анкета для брендов, желающих разместиться на наших SEO-сайтах. Займёт 5–7 минут.',
+    stat1:'минут', stat2:'блока', stat3:'конфиденциально', stat3_sub:'не публикуется',
+    start:'Начать',
+    b1_tag:'Блок 1 из 3', b1_title:'Контакт и бренд', b1_sub:'Контактные данные и основная информация о бренде.',
+    mgr_name:'Полное имя менеджера', mgr_email:'Email', mgr_tg:'Telegram username',
+    aff_url:'URL аффилиатной программы',
+    brand_name:'Название бренда', brand_year:'Год запуска', brand_url:'URL бренда',
+    license_label:'Действующая лицензия', license_na_hint:'Нет лицензии — поясните ниже',
+    license_note_ph:'Поясните ситуацию с лицензированием…',
+    software_label:'Whitelabel-платформа', software_note_ph:'Укажите платформу…',
+    b2_tag:'Блок 2 из 3', b2_title:'Трафик и структура сделки',
+    b2_sub:'Фокус по GEO, условия сделки, SEO-конверсия и принимаемые подходы.',
+    ff_label:'Работаете ли вы с фиксированными взносами за размещение в топовых позициях?',
+    ff_hint:'Например: featured-позиция, топ-3 на странице обзора за календарный месяц',
+    ff_yes:'Да — уже работаем с фиксированными взносами', ff_open:'Готовы обсудить', ff_no:'Нет, пока не рассматриваем',
+    tier_label:'Лучшая конверсия / целевой Tier', geo_label:'Укажите целевые GEO',
+    cr_label:'Средняя конверсия (рег → депозит) — SEO-трафик',
+    seo_label:'Принимаемые SEO-подходы', seo_hint:'Выберите все подходящие.',
+    seo_a1:'Parasite SEO (Reddit, TrustPilot и др.)',
+    seo_a2:'Классические / дроп-доменные / EMD / слот-обзорные сайты',
+    seo_a3:'Кросс-бренд — перенаправление пользователей между продуктами',
+    seo_a4:'Моно-бренд — сайт полностью посвящён вашему казино',
+    seo_a4_hint:'Могут использоваться брендовые ключевые слова',
+    b3_tag:'Блок 3 из 3', b3_title:'Операция и платежи', b3_sub:'Зрелость продукта, CRM и условия оплаты.',
+    ret_label:'Реализованные стратегии удержания', ret_hint:'Выберите все подходящие.',
+    ret1:'Поведенческий CRM-трекинг', ret2:'Email-кампании удержания', ret3:'Поддержка в чате',
+    ret4:'Телефонная поддержка (VIP, местный язык)', ret5:'SMS / Push-уведомления',
+    ret6:'Программа лояльности / VIP', ret7:'Бонусы за реактивацию', ret8:'Персонализированные бонусы',
+    ret_other_ph:'Другие методы удержания…',
+    pp_label:'Целевой срок окупаемости продукта',
+    pp1:'3 месяца', pp2:'6 месяцев', pp3:'9 месяцев', pp4:'1 год+',
+    pt_label:'Условия оплаты аффилиатной программы',
+    comment_label:'Что-то ещё?',
+    comment_ph:'Предпочтительная структура сделки, целевые GEO, ожидаемые FTD, вопросы…',
+    submit:'Отправить', back:'Назад', next:'Продолжить',
+    success_title:'Заявка получена',
+    success_sub:'Мы рассмотрим ваши данные и свяжемся в течение 1–2 рабочих дней.',
+    err_required:'Обязательное поле', err_email:'Введите корректный email',
+    err_url:'Введите корректный URL (включая https://)', err_tier:'Выберите хотя бы один уровень'
+  },
+  ua:{
+    wordmark:'Партнерська заявка',
+    badge:'Заявка на афіліатне партнерство',
+    intro_title:'Розкажіть про свій продукт — знайдемо правильний формат.',
+    intro_sub:'Структурована анкета для брендів, що бажають розміститися на наших SEO-сайтах. Займе 5–7 хвилин.',
+    stat1:'хвилин', stat2:'блоки', stat3:'конфіденційно', stat3_sub:'не публікується',
+    start:'Почати',
+    b1_tag:'Блок 1 з 3', b1_title:'Контакт та бренд', b1_sub:'Контактні дані та основна інформація про бренд.',
+    mgr_name:"Повне ім'я менеджера", mgr_email:'Email', mgr_tg:'Telegram username',
+    aff_url:'URL афіліатної програми',
+    brand_name:'Назва бренду', brand_year:'Рік запуску', brand_url:'URL бренду',
+    license_label:'Діюча ліцензія', license_na_hint:'Немає ліцензії — поясніть нижче',
+    license_note_ph:'Поясніть ситуацію з ліцензуванням…',
+    software_label:'Whitelabel-платформа', software_note_ph:'Вкажіть платформу…',
+    b2_tag:'Блок 2 з 3', b2_title:'Трафік та структура угоди',
+    b2_sub:'Фокус по GEO, умови угоди, SEO-конверсія та прийнятні підходи.',
+    ff_label:'Чи працюєте ви з фіксованими внесками за розміщення у топових позиціях?',
+    ff_hint:'Наприклад: featured-позиція, топ-3 на сторінці огляду за календарний місяць',
+    ff_yes:'Так — вже працюємо з фіксованими внесками', ff_open:'Готові обговорити', ff_no:'Ні, наразі не розглядаємо',
+    tier_label:'Найкраща конверсія / цільовий Tier', geo_label:'Вкажіть цільові GEO',
+    cr_label:'Середня конверсія (реєстрація → депозит) — SEO-трафік',
+    seo_label:'Прийнятні SEO-підходи', seo_hint:'Виберіть усі відповідні.',
+    seo_a1:'Parasite SEO (Reddit, TrustPilot тощо)',
+    seo_a2:'Класичні / дроп-доменні / EMD / слот-оглядові сайти',
+    seo_a3:'Крос-бренд — перенаправлення користувачів між продуктами',
+    seo_a4:'Моно-бренд — сайт повністю присвячений вашому казино',
+    seo_a4_hint:'Можуть використовуватись брендові ключові слова',
+    b3_tag:'Блок 3 з 3', b3_title:'Операція та платежі', b3_sub:'Зрілість продукту, CRM та умови оплати.',
+    ret_label:'Реалізовані стратегії утримання', ret_hint:'Виберіть усі відповідні.',
+    ret1:'Поведінковий CRM-трекінг', ret2:'Email-кампанії утримання', ret3:'Підтримка в чаті',
+    ret4:'Телефонна підтримка (VIP, місцева мова)', ret5:'SMS / Push-сповіщення',
+    ret6:'Програма лояльності / VIP', ret7:'Бонуси за реактивацію', ret8:'Персоналізовані бонуси',
+    ret_other_ph:'Інші методи утримання…',
+    pp_label:'Цільовий термін окупності продукту',
+    pp1:'3 місяці', pp2:'6 місяців', pp3:'9 місяців', pp4:'1 рік+',
+    pt_label:'Умови оплати афіліатної програми',
+    comment_label:'Щось іще?',
+    comment_ph:"Бажана структура угоди, цільові GEO, очікувані FTD, запитання…",
+    submit:'Надіслати', back:'Назад', next:'Продовжити',
+    success_title:'Заявку отримано',
+    success_sub:"Ми розглянемо ваші дані та зв'яжемося протягом 1–2 робочих днів.",
+    err_required:"Обов'язкове поле", err_email:'Введіть коректний email',
+    err_url:'Введіть коректний URL (включаючи https://)', err_tier:'Виберіть хоча б один рівень'
+  }
+};
+
+let lang = 'en';
+let currentStep = 0;
+const TOTAL = 3;
+const selectedTiers = new Set();
+
+function applyLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.lang === l); });
+  document.querySelectorAll('[data-k]').forEach(function(el){
+    var k = el.dataset.k;
+    if (T[l][k] !== undefined) el.innerHTML = T[l][k];
+  });
+  document.querySelectorAll('[data-ph]').forEach(function(el){
+    var k = el.dataset.ph;
+    if (T[l][k] !== undefined) el.placeholder = T[l][k];
+  });
+  document.documentElement.lang = l;
+}
+
+function renderDots() {
+  var c = document.getElementById('dots');
+  c.innerHTML = '';
+  if (currentStep === 0 || currentStep > TOTAL) { c.style.display='none'; return; }
+  c.style.display='flex';
+  for (var i=1; i<=TOTAL; i++) {
+    var d = document.createElement('span');
+    d.className='dot'+(i<currentStep?' done':i===currentStep?' active':'');
+    c.appendChild(d);
+  }
+}
+
+function setProgress(n) {
+  var pct = n===0?0:n>TOTAL?100:Math.round((n/TOTAL)*100);
+  document.getElementById('progressBar').style.width = pct+'%';
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  var t = document.getElementById(n>TOTAL?'step-success':'step-'+n);
+  if(t) t.classList.add('active');
+  currentStep=n; renderDots(); setProgress(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validate(step) {
+  var ok=true;
+  function req(wid,iid){
+    var v=(document.getElementById(iid)||{}).value||'';
+    var bad=!v.trim(); document.getElementById(wid).classList.toggle('has-error',bad);
+    if(bad)ok=false;
+  }
+  function email(wid,iid){
+    var v=(document.getElementById(iid)||{}).value||'';
+    var bad=!v.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    document.getElementById(wid).classList.toggle('has-error',bad); if(bad)ok=false;
+  }
+  function url(wid,iid){
+    var v=(document.getElementById(iid)||{}).value||'';
+    var bad=!v.trim()||!/^https?:\/\/.+/.test(v);
+    document.getElementById(wid).classList.toggle('has-error',bad); if(bad)ok=false;
+  }
+  function grp(gid){
+    var el=document.getElementById(gid);
+    if(!el)return;
+    if(!el.querySelector('input:checked')){el.classList.add('group-error');ok=false;}
+    else el.classList.remove('group-error');
+  }
+  function chk(gid){
+    var el=document.getElementById(gid);
+    if(!el)return;
+    if(!el.querySelectorAll('input:checked').length){el.classList.add('group-error');ok=false;}
+    else el.classList.remove('group-error');
+  }
+
+  if(step===1){
+    req('f-mgr-name','mgr_name');
+    email('f-mgr-email','mgr_email');
+    req('f-mgr-tg','mgr_tg');
+    url('f-aff-url','aff_url');
+    req('f-brand-name','brand_name');
+    req('f-brand-year','brand_year');
+    url('f-brand-url','brand_url');
+    grp('license-group');
+    grp('software-group');
+  }
+  if(step===2){
+    grp('ff-group');
+    if(selectedTiers.size===0){document.getElementById('tier-error').style.display='block';ok=false;}
+    else document.getElementById('tier-error').style.display='none';
+    req('f-geo-list','geo_list');
+    grp('cr-group');
+    chk('seo-group');
+  }
+  if(step===3){
+    chk('retention-group');
+    grp('pp-group');
+    grp('pt-group');
+  }
+  return ok;
+}
+
+function collectData(){
+  function v(id){return(document.getElementById(id)||{}).value||'';}
+  function radio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
+  function checks(gid){return Array.from(document.querySelectorAll('#'+gid+' input:checked')).map(function(i){return i.value;}).join(', ');}
+  return {
+    'Submitted At':      new Date().toISOString(),
+    'Language':          lang.toUpperCase(),
+    'Manager Name':      v('mgr_name'),
+    'Manager Email':     v('mgr_email'),
+    'Manager Telegram':  v('mgr_tg'),
+    'Affiliate URL':     v('aff_url'),
+    'Brand Name':        v('brand_name'),
+    'Brand Year':        v('brand_year'),
+    'Brand URL':         v('brand_url'),
+    'License':           radio('license'),
+    'License Note':      v('license_note'),
+    'Software':          radio('software'),
+    'Software Note':     v('software_note'),
+    'Fixed Fees':        radio('fixed_fees'),
+    'Focus Tiers':       Array.from(selectedTiers).join(', '),
+    'Target GEOs':       v('geo_list'),
+    'Avg CR (SEO)':      radio('cr_seo'),
+    'SEO Approaches':    checks('seo-group'),
+    'Retention':         checks('retention-group'),
+    'Retention Other':   v('retention_other'),
+    'Payback Period':    radio('payback'),
+    'Payment Terms':     radio('payment_terms'),
+    'Comment':           v('comment')
+  };
+}
+
+async function submitForm(){
+  if(!validate(3)){showNotif(T[lang].err_required);return;}
+  var btn=document.getElementById('submit-btn');
+  btn.classList.add('loading');btn.disabled=true;
+  await sendSheets(collectData());
+  btn.classList.remove('loading');btn.disabled=false;
+  goStep(TOTAL+1);
+}
+
+async function sendSheets(data){
+  try{await fetch(SHEET_URL,{method:'POST',body:JSON.stringify(data)});}catch(e){}
+}
+
+function showNotif(msg){
+  var n=document.getElementById('notif');
+  document.getElementById('notif-text').textContent=msg;
+  n.classList.add('show');
+  setTimeout(function(){n.classList.remove('show');},3000);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.addEventListener('click',function(){applyLang(b.dataset.lang);});
+  });
+  document.getElementById('btn-start').addEventListener('click',function(){goStep(1);});
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click',function(){goStep(parseInt(b.dataset.goto));});
+  });
+  document.querySelectorAll('[data-next]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var cur=parseInt(b.dataset.next);
+      if(validate(cur))goStep(cur+1);
+      else showNotif(T[lang].err_required);
+    });
+  });
+  document.getElementById('submit-btn').addEventListener('click',submitForm);
+
+  document.querySelectorAll('.choice-item[data-radio]').forEach(function(item){
+    item.addEventListener('click',function(){
+      var name=item.dataset.radio, val=item.dataset.val;
+      document.querySelectorAll('.choice-item[data-radio="'+name+'"]').forEach(function(el){el.classList.remove('selected');});
+      item.classList.add('selected');
+      var inp=item.querySelector('input[type=radio]');if(inp)inp.checked=true;
+      if(name==='license') document.getElementById('license-explain').classList.toggle('visible',val==='N/A'||val==='Other');
+      if(name==='software') document.getElementById('software-explain').classList.toggle('visible',val==='Other');
+      var grp=document.getElementById(name+'-group');if(grp)grp.classList.remove('group-error');
+      if(name==='fixed_fees')document.getElementById('ff-group').classList.remove('group-error');
+    });
+  });
+
+  document.querySelectorAll('.tier-pill').forEach(function(pill){
+    pill.addEventListener('click',function(){
+      var tier=pill.dataset.tier;
+      if(selectedTiers.has(tier)){selectedTiers.delete(tier);pill.classList.remove('active');}
+      else{selectedTiers.add(tier);pill.classList.add('active');}
+    });
+  });
+
+  document.querySelectorAll('[data-checkbox]').forEach(function(item){
+    item.addEventListener('click',function(){
+      item.classList.toggle('selected');
+      var cb=item.querySelector('input[type=checkbox]');
+      if(cb)cb.checked=item.classList.contains('selected');
+      var grp=item.closest('.check-grid,.choice-group');
+      if(grp)grp.classList.remove('group-error');
+    });
+  });
+
+  applyLang('en');
+  renderDots();
+  setProgress(0);
+});
+</script>
+</body>
+</html>
