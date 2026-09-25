@@ -279,6 +279,44 @@ textarea{resize:vertical;min-height:96px}
       </div>
     </div>
 
+<div class="divider"></div>
+
+    <!-- Q6.2: API Support -->
+    <div class="field">
+      <label>Does your affiliate platform support data export via API?</label>
+      <p class="hint">Determines whether automated reporting and click-level tracking is possible.</p>
+      <div class="choice-group" id="api-group" style="flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:8px">
+        <label class="choice-item" data-radio="api" data-val="Yes" style="flex:1;min-width:100px">
+          <input type="radio" name="api" value="Yes"><span class="choice-label">Yes</span>
+        </label>
+        <label class="choice-item" data-radio="api" data-val="In development" style="flex:1;min-width:140px">
+          <input type="radio" name="api" value="In development"><span class="choice-label">In development</span>
+        </label>
+        <label class="choice-item" data-radio="api" data-val="No" style="flex:1;min-width:100px">
+          <input type="radio" name="api" value="No"><span class="choice-label">No</span>
+        </label>
+      </div>
+      <div class="conditional-field" id="api-clickid-wrap">
+        <label style="display:block;margin-top:14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6)">
+          Can RevShare be tracked and attributed at click ID level?
+          <small style="display:block;margin-top:3px;font-weight:400;color:rgba(255,255,255,.38)">
+            i.e. each customer gets a unique ID so RevShare revenue can be attributed back to the exact traffic source
+          </small>
+        </label>
+        <div class="choice-group" id="api-clickid-group" style="flex-direction:row;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <label class="choice-item" data-radio="api_click_id" data-val="Yes" style="flex:1;min-width:100px">
+            <input type="radio" name="api_click_id" value="Yes"><span class="choice-label">Yes</span>
+          </label>
+          <label class="choice-item" data-radio="api_click_id" data-val="No" style="flex:1;min-width:100px">
+            <input type="radio" name="api_click_id" value="No"><span class="choice-label">No</span>
+          </label>
+          <label class="choice-item" data-radio="api_click_id" data-val="Not sure" style="flex:1;min-width:120px">
+            <input type="radio" name="api_click_id" value="Not sure"><span class="choice-label">Not sure</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
     <div class="nav-row">
       <button class="btn btn-ghost" data-goto="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span data-k="back">Back</span></button>
       <span class="step-counter">1 / 3</span>
@@ -342,7 +380,7 @@ textarea{resize:vertical;min-height:96px}
       <label><span data-k="seo_label">SEO approaches you accept</span><span class="req">*</span></label>
       <p class="hint" data-k="seo_hint">Select all that apply.</p>
       <div class="choice-group" id="seo-group" style="margin-top:8px">
-        <label class="choice-item" data-checkbox><input type="checkbox" value="Parasite SEO"><span class="choice-label" data-k="seo_a1">Parasite SEO (Reddit, TrustPilot, etc.)</span></label>
+        <label class="choice-item" data-checkbox><input type="checkbox" value="Parasite SEO"><span class="choice-label" data-k="seo_a1">Parasite SEO (Reddit, TrustPilot, news magazines, etc.)</span></label>
         <label class="choice-item" data-checkbox><input type="checkbox" value="Classic / drop-domain / EMD / slot review sites"><span class="choice-label" data-k="seo_a2">Classic review / drop-domain / EMD / slot review sites</span></label>
         <label class="choice-item" data-checkbox><input type="checkbox" value="Cross-brand"><span class="choice-label" data-k="seo_a3">Cross-brand approach</span></label>
         <label class="choice-item" data-checkbox><input type="checkbox" value="Mono-brand"><span class="choice-label" data-k="seo_a4">Mono-brand approach<small data-k="seo_a4_hint">Brand keywords may be used</small></span></label>
@@ -381,14 +419,29 @@ textarea{resize:vertical;min-height:96px}
 
     <div class="divider"></div>
 
-    <!-- Q12: Target payback period -->
+   <!-- Q12: Deposit conversion window -->
     <div class="field">
-      <label><span data-k="pp_label">Target payback period on product</span><span class="req">*</span></label>
-      <div class="choice-group" id="pp-group" style="flex-direction:row;flex-wrap:wrap;gap:7px;margin-top:6px">
-        <label class="choice-item" data-radio="payback" data-val="3 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="3 months"><span class="choice-label" data-k="pp1">3 months</span></label>
-        <label class="choice-item" data-radio="payback" data-val="6 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="6 months"><span class="choice-label" data-k="pp2">6 months</span></label>
-        <label class="choice-item" data-radio="payback" data-val="9 months" style="flex:1;min-width:110px"><input type="radio" name="payback" value="9 months"><span class="choice-label" data-k="pp3">9 months</span></label>
-        <label class="choice-item" data-radio="payback" data-val="1 year+" style="flex:1;min-width:110px"><input type="radio" name="payback" value="1 year+"><span class="choice-label" data-k="pp4">1 year+</span></label>
+      <label>Deposit conversion window<span class="req">*</span></label>
+      <p class="hint">How many days after registration is a first deposit still counted as a valid conversion and paid out?</p>
+      <div class="choice-group" id="cw-group" style="flex-direction:row;flex-wrap:wrap;gap:7px;margin-top:8px">
+        <label class="choice-item" data-radio="conv_window" data-val="24 hours" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="24 hours"><span class="choice-label">24 hours</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="3 days" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="3 days"><span class="choice-label">3 days</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="7 days" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="7 days"><span class="choice-label">7 days</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="14 days" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="14 days"><span class="choice-label">14 days</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="30 days" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="30 days"><span class="choice-label">30 days</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="No limit" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="No limit"><span class="choice-label">No limit</span>
+        </label>
       </div>
     </div>
 
@@ -463,7 +516,7 @@ const T = {
     tier_label:'Best converting / focus Tier', geo_label:'Specify target GEOs',
     cr_label:'Avg. conversion rate (reg → deposit) — SEO traffic',
     seo_label:'SEO approaches you accept', seo_hint:'Select all that apply.',
-    seo_a1:'Parasite SEO (Reddit, TrustPilot, etc.)',
+    seo_a1:'Parasite SEO (Reddit, TrustPilot, news magazines, etc.)',
     seo_a2:'Classic review / drop-domain / EMD / slot review sites',
     seo_a3:'Cross-brand approach',
     seo_a4:'Mono-brand approach',
@@ -582,7 +635,7 @@ function validate(step) {
   }
   if(step===3){
     chk('retention-group');
-    grp('pp-group');
+    grp('cw-group');
     grp('pt-group');
   }
   return ok;
@@ -592,7 +645,7 @@ function collectData(){
   function v(id){return(document.getElementById(id)||{}).value||'';}
   function radio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
   function checks(gid){return Array.from(document.querySelectorAll('#'+gid+' input:checked')).map(function(i){return i.value;}).join(', ');}
-  return {
+return {
     'Submitted At':      new Date().toISOString(),
     'Language':          lang.toUpperCase(),
     'Manager Name':      v('mgr_name'),
@@ -606,6 +659,8 @@ function collectData(){
     'License Note':      v('license_note'),
     'Software':          radio('software'),
     'Software Note':     v('software_note'),
+    'API Support':       radio('api'),
+    'API Click ID':      radio('api_click_id'),
     'Fixed Fees':        radio('fixed_fees'),
     'Focus Tiers':       Array.from(selectedTiers).join(', '),
     'Target GEOs':       v('geo_list'),
@@ -613,7 +668,7 @@ function collectData(){
     'SEO Approaches':    checks('seo-group'),
     'Retention':         checks('retention-group'),
     'Retention Other':   v('retention_other'),
-    'Payback Period':    radio('payback'),
+    'Conversion Window': radio('conv_window'),
     'Payment Terms':     radio('payment_terms'),
     'Comment':           v('comment')
   };
@@ -664,6 +719,7 @@ document.addEventListener('DOMContentLoaded',function(){
       var inp=item.querySelector('input[type=radio]');if(inp)inp.checked=true;
       if(name==='license') document.getElementById('license-explain').classList.toggle('visible',val==='N/A'||val==='Other');
       if(name==='software') document.getElementById('software-explain').classList.toggle('visible',val==='Other');
+      if(name==='api') document.getElementById('api-clickid-wrap').classList.toggle('visible',val==='Yes');
       var grp=document.getElementById(name+'-group');if(grp)grp.classList.remove('group-error');
       if(name==='fixed_fees')document.getElementById('ff-group').classList.remove('group-error');
     });
