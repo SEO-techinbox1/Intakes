@@ -419,29 +419,30 @@ textarea{resize:vertical;min-height:96px}
 
     <div class="divider"></div>
 
-   <!-- Q12: Deposit conversion window -->
-    <div class="field">
+ <!-- Q12: Deposit conversion window -->
+    <div class="field" id="f-conv-window">
       <label>Deposit conversion window<span class="req">*</span></label>
       <p class="hint">How many days after registration is a first deposit still counted as a valid conversion and paid out?</p>
       <div class="choice-group" id="cw-group" style="flex-direction:row;flex-wrap:wrap;gap:7px;margin-top:8px">
-        <label class="choice-item" data-radio="conv_window" data-val="24 hours" style="flex:1;min-width:100px">
-          <input type="radio" name="conv_window" value="24 hours"><span class="choice-label">24 hours</span>
-        </label>
-        <label class="choice-item" data-radio="conv_window" data-val="3 days" style="flex:1;min-width:100px">
-          <input type="radio" name="conv_window" value="3 days"><span class="choice-label">3 days</span>
-        </label>
-        <label class="choice-item" data-radio="conv_window" data-val="7 days" style="flex:1;min-width:100px">
-          <input type="radio" name="conv_window" value="7 days"><span class="choice-label">7 days</span>
-        </label>
         <label class="choice-item" data-radio="conv_window" data-val="14 days" style="flex:1;min-width:100px">
           <input type="radio" name="conv_window" value="14 days"><span class="choice-label">14 days</span>
         </label>
-        <label class="choice-item" data-radio="conv_window" data-val="30 days" style="flex:1;min-width:100px">
-          <input type="radio" name="conv_window" value="30 days"><span class="choice-label">30 days</span>
+        <label class="choice-item" data-radio="conv_window" data-val="1 month" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="1 month"><span class="choice-label">1 month</span>
         </label>
-        <label class="choice-item" data-radio="conv_window" data-val="No limit" style="flex:1;min-width:100px">
-          <input type="radio" name="conv_window" value="No limit"><span class="choice-label">No limit</span>
+        <label class="choice-item" data-radio="conv_window" data-val="3 month" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="3 month"><span class="choice-label">3 month</span>
         </label>
+        <label class="choice-item" data-radio="conv_window" data-val="6 month" style="flex:1;min-width:100px">
+          <input type="radio" name="conv_window" value="6 month"><span class="choice-label">6 month</span>
+        </label>
+        <label class="choice-item" data-radio="conv_window" data-val="Other period" style="flex:1;min-width:120px">
+          <input type="radio" name="conv_window" value="Other period"><span class="choice-label">Other period</span>
+        </label>
+      </div>
+      <div class="conditional-field" id="cw-other-wrap">
+        <input type="text" id="conv_window_note" placeholder="Specify conversion window period…">
+        <span class="field-error">Required</span>
       </div>
     </div>
 
@@ -636,6 +637,10 @@ function validate(step) {
   if(step===3){
     chk('retention-group');
     grp('cw-group');
+    var cwVal = (document.querySelector('input[name="conv_window"]:checked')||{}).value;
+    if(cwVal === 'Other period') {
+      req('cw-other-wrap', 'conv_window_note');
+    }
     grp('pt-group');
   }
   return ok;
@@ -720,6 +725,7 @@ document.addEventListener('DOMContentLoaded',function(){
       if(name==='license') document.getElementById('license-explain').classList.toggle('visible',val==='N/A'||val==='Other');
       if(name==='software') document.getElementById('software-explain').classList.toggle('visible',val==='Other');
       if(name==='api') document.getElementById('api-clickid-wrap').classList.toggle('visible',val==='Yes');
+      if(name==='conv_window') document.getElementById('cw-other-wrap').classList.toggle('visible',val==='Other period');
       var grp=document.getElementById(name+'-group');if(grp)grp.classList.remove('group-error');
       if(name==='fixed_fees')document.getElementById('ff-group').classList.remove('group-error');
     });
